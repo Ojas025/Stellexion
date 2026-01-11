@@ -1,0 +1,8 @@
+- shifted schemas to separate folder
+- shifted auth helper functions
+- added centralized configuration
+- modularized api routes
+- added .env.sample
+- refactored routing logic using separate routers
+- refactored file structure
+- add centralized logging
