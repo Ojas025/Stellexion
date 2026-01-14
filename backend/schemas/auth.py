@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict
 
 from schemas.user import UserResponse
 
-class AuthResponse(BaseModel):
+class Token(BaseModel):
     access_token: str
     token_type: str
     user: UserResponse

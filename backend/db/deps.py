@@ -1,8 +1,9 @@
-from db.session import AsyncSessionLocal
+from db.session import get_sessionmaker
 
 async def get_db():
-    async with AsyncSessionLocal() as session:
+    session = get_sessionmaker()
+    async with session() as s:
         try:
-            yield session
+            yield s
         finally:
-            await session.close()
+            await s.close()

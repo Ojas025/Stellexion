@@ -4,9 +4,10 @@ from contextlib import asynccontextmanager
 
 from services.config import get_config
 from db.base import Base
-from db.engine import engine
+from db.engine import init_engine
 
 config = get_config()
+engine = init_engine(config.db_url)
 
 # Create database tables
 async def create_tables():

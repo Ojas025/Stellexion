@@ -19,7 +19,7 @@ from services.auth import (
 )
 from services.config import get_config
 from schemas.auth import (
-    AuthResponse
+    Token
 )
 from services.user_service import (
     find_existing_user,
@@ -29,8 +29,8 @@ from services.user_service import (
 config = get_config()
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-@router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)) -> AuthResponse:
+@router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
+async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)) -> Token:
     # Check if user already exists
     existing_user = await find_existing_user(db,user_data.email, user_data.mobile)
 
@@ -72,30 +72,31 @@ async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)) ->
         data={"sub": db_user.id}, expires_delta=access_token_expires
     )
     
-    return AuthResponse(
+    return Token(
         access_token=access_token,
         token_type="bearer",
         user=db_user
     )
 
-@router.post("/login", response_model=AuthResponse)
-async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)) -> AuthResponse:
+@router.post("/login", response_model=Token)
+async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)) -> Token:
     # Find user by email
     user = await find_user_by_email(db, user_data.email)
 
+    
     if not user or not verify_password(user_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password"
         )
-    
+
     # Create access token
     access_token_expires = timedelta(minutes=config.access_token_expire_minutes)
     access_token = create_access_token(
         data={"sub": user.id}, expires_delta=access_token_expires
     )
     
-    return AuthResponse(
+    return Token(
         access_token=access_token,
         token_type="bearer",
         user=user

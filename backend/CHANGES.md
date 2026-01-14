@@ -12,3 +12,6 @@
 - merged email+mobile db queries to reduce database calls
 - added try-except and rollback instead of exception
 - added user_service, reducing complexity from auth routes
+- added unit tests for user_service
+- added unit tests for authentication
+- modified login function to have separate user_not_found and invalid_credentials exception handling
