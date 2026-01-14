@@ -6,3 +6,9 @@
 - refactored routing logic using separate routers
 - refactored file structure
 - add centralized logging
+
+- Migrate from sqlite to PostgreSQL
+- Added log statements throughout the app
+- merged email+mobile db queries to reduce database calls
+- added try-except and rollback instead of exception
+- added user_service, reducing complexity from auth routes

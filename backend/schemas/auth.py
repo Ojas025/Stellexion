@@ -1,7 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 
 from schemas.user import UserResponse
-from db.models import User
 
 class AuthResponse(BaseModel):
     access_token: str

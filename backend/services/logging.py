@@ -20,7 +20,7 @@ def setup_logging(debug_level="INFO"):
                 "class": "logging.FileHandler",
                 "level": "DEBUG",
                 "formatter": "default",
-                "filename": "src/logs.log",
+                "filename": LOG_FILE_PATH,
                 "mode": "a",
                 "encoding": "utf-8"
             },

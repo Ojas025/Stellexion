@@ -1,44 +1,48 @@
 from fastapi import APIRouter, status, HTTPException, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
+from sqlalchemy.future import select
+from sqlalchemy.exc import IntegrityError
 
 from schemas.user import (
     UserCreate,
     UserLogin,
     UserResponse
 )
-from db.database import get_db
+from db.deps import get_db
 from db.models import User
-from backend.services.auth import (
+from services.auth import (
     create_access_token,
     get_current_user,
     get_password_hash,
     verify_password
 )
-from backend.services.config import get_config
+from services.config import get_config
 from schemas.auth import (
     AuthResponse
+)
+from services.user_service import (
+    find_existing_user,
+    find_user_by_email
 )
 
 config = get_config()
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-@router.post("/api/auth/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-def register(user_data: UserCreate, db: Session = Depends(get_db)) -> AuthResponse:
+@router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
+async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)) -> AuthResponse:
     # Check if user already exists
-    db_user = db.query(User).filter(User.email == user_data.email).first()
-    if db_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+    existing_user = await find_existing_user(db,user_data.email, user_data.mobile)
+
+    if existing_user:
+        detail = (
+            "Email already registered"
+            if existing_user.email == user_data.email
+            else "Mobile number already registered"
         )
-    
-    # Check if mobile already exists
-    db_user_mobile = db.query(User).filter(User.mobile == user_data.mobile).first()
-    if db_user_mobile:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Mobile number already registered"
+            detail=detail
         )
     
     # Create new user
@@ -50,9 +54,17 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)) -> AuthRespon
         mobile=user_data.mobile,
         hashed_password=hashed_password
     )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    
+    try:
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User already exists"
+        )
     
     # Create access token
     access_token_expires = timedelta(minutes=config.access_token_expire_minutes)
@@ -66,10 +78,11 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)) -> AuthRespon
         user=db_user
     )
 
-@router.post("/api/auth/login", response_model=AuthResponse)
-def login(user_data: UserLogin, db: Session = Depends(get_db)) -> AuthResponse:
+@router.post("/login", response_model=AuthResponse)
+async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)) -> AuthResponse:
     # Find user by email
-    user = db.query(User).filter(User.email == user_data.email).first()
+    user = await find_user_by_email(db, user_data.email)
+
     if not user or not verify_password(user_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -88,6 +101,6 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)) -> AuthResponse:
         user=user
     )
 
-@router.get("/api/auth/me", response_model=UserResponse)
-def get_current_user_info(current_user: User = Depends(get_current_user)) -> User:
+@router.get("/me", response_model=UserResponse)
+async def get_current_user_info(current_user: User = Depends(get_current_user)) -> User:
     return current_user

@@ -19,21 +19,18 @@ class Config(BaseSettings):
     debug: bool = False
     
     # CORS
-    cors_origins: List[str] = Field(
-        default_factory=lambda: ["http://localhost:3000", "http://127.0.0.1:3000"]
+    cors_origins: str = Field(
+        "http://localhost:3000,http://127.0.0.1:3000"
     )
     
-    @field_validator("cors_origins", pre=True)
-    def parse_cors_origins(cls, v):
-        """Validate comma-separated values from .env"""
-        if isinstance(v, str):
-            return [x.strip() for x in v.split(",") if x.strip()]
-        
-        return v
+    @property
+    def cors_origin_list(self) -> List[str]:
+        return [x.strip() for x in self.cors_origins.split(",") if x.strip()]
 
     # DB
     db_url: str = Field(
-        default="sqlite:///./stellexion.db",
+        ...,
+        env="DB_URL",
         description="Database url"
     )
     
