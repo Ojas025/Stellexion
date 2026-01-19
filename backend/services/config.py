@@ -13,6 +13,7 @@ class Config(BaseSettings):
     )
     
     # APP
+    port: int = 8000
     app_name: str = "Stellexion API"
     version: str = "1.0.0"
     env: str = "development"
