@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
 
+const BACKEND_URL = process.env.BACKEND_URL;
+
 export default function AuthModal({ isOpen, onClose, onAuthSuccess, isLogin: initialIsLogin = true }) {
   const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [showPassword, setShowPassword] = useState(false);
@@ -40,7 +42,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, isLogin: ini
             password: formData.password,
           };
 
-      const response = await fetch(`http://localhost:8000${endpoint}`, {
+      const response = await fetch(`${BACKEND_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
