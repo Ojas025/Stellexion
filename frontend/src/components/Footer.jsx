@@ -32,9 +32,9 @@ export default function Footer() {
             <p className="text-light-gray/70 mb-6">
               The future of digital commerce, powered by blockchain.
             </p>
-            <a href="mailto:hello@stellexion.com" className="inline-flex items-center gap-2 text-electric-blue hover:text-magenta transition-colors">
+            <a href="mailto:stellexion@gmail.com" className="inline-flex items-center gap-2 text-electric-blue hover:text-magenta transition-colors">
               <Mail size={18} />
-              hello@stellexion.com
+              stellexion@gmail.com
             </a>
           </motion.div>
 

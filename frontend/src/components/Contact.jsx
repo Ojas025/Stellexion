@@ -63,7 +63,7 @@ export default function Contact() {
             className="text-sm text-light-gray/50 mt-8"
           >
             <Mail size={16} className="inline mr-2" />
-            Questions? Email us at hello@stellexion.com
+            Questions? Email us at stellexion@gmail.com
           </motion.p>
         </motion.div>
       </div>
