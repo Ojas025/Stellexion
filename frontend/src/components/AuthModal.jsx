@@ -146,7 +146,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, isLogin: ini
           style={{height: '70px', padding: '10px'}}
           >
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl px-4 font-bold text-white">
                 {isLogin ? 'Welcome Back' : 'Create Account'}
               </h2>
               <button
@@ -156,7 +156,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, isLogin: ini
                 <X size={24} />
               </button>
             </div>
-            <p className="text-light-gray/70 text-sm mt-2"
+            <p className="text-light-gray/70 text-sm mt-2 px-4"
             style={{margin: '0px'}}
             >
               {isLogin

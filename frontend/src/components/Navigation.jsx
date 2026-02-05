@@ -69,7 +69,7 @@ export default function Navigation() {
           </motion.a>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-12">
             {navItems.map((item, index) => (
               <motion.a
                 key={index}
@@ -78,7 +78,7 @@ export default function Navigation() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="text-light-gray text-sm hover:text-electric-blue transition-colors cursor-pointer"
+                className="text-light-gray text-sm font-semibold hover:text-electric-blue transition-colors cursor-pointer"
               >
                 {item.label}
               </motion.a>
@@ -95,7 +95,7 @@ export default function Navigation() {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 text-sm text-light-gray hover:text-electric-blue transition-colors"
+                  className="px-4 py-2 text-sm text-light-gray hover:text-electric-blue transition-colors font-semibold"
                 >
                   Logout
                 </button>
@@ -104,7 +104,7 @@ export default function Navigation() {
               <>
                 <button
                   onClick={() => openAuthModal(true)}
-                  className="px-4 py-2 text-sm text-light-gray hover:text-electric-blue transition-colors flex items-center gap-2"
+                  className="px-4 py-2 text-sm text-light-gray hover:text-electric-blue transition-colors flex items-center gap-2 font-semibold"
                 >
                   <LogIn size={18} />
                   Login

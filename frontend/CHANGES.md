@@ -1,0 +1,4 @@
+- Optimized FAQ animation lag
+- Improved login/signup modal ui
+- Improved header text visibility
+- Added Stellexion email
